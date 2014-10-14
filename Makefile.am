@@ -163,9 +163,9 @@ endif #HAVE_ALSA
 endif #HAVE_SAMPLERATE
 
 if HAVE_ZITA_BRIDGE_DEPS
-SUBDIRS = zalsa
+SUBDIRS = zalsa zalsapp
 endif
 
-DIST_SUBDIRS = zalsa
+DIST_SUBDIRS = zalsa zalsapp
 
 # XXX ? dist-hook: dist-check-sndfile dist-check-samplerate
