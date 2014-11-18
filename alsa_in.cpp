@@ -15,7 +15,7 @@
 
 #include <jack/jack.h>
 #include <jack/jslist.h>
-#include "memops.h"
+#include "memops.hpp"
 
 #include "alsa/asoundlib.h"
 
@@ -460,9 +460,9 @@ again:
     while ( node != NULL)
     {
 	jack_port_t *port = (jack_port_t *) node->data;
-	float *buf = jack_port_get_buffer (port, nframes);
+	float *buf = (float*)jack_port_get_buffer (port, nframes);
 
-	SRC_STATE *src_state = src_node->data;
+	SRC_STATE *src_state = (SRC_STATE *)src_node->data;
 
 	formats[format].soundcard_to_jack( resampbuf, outbuf + format[formats].sample_size * chn, rlen, num_channels*format[formats].sample_size );
 
@@ -499,22 +499,22 @@ again:
 void
 latency_cb (jack_latency_callback_mode_t mode, void *arg)
 {
-	jack_latency_range_t range;
-	JSList *node;
+    jack_latency_range_t range;
+    JSList *node;
 
-	range.min = range.max = target_delay;
+    range.min = range.max = target_delay;
 
-	if (mode == JackCaptureLatency) {
-		for (node = capture_ports; node; node = jack_slist_next (node)) {
-			jack_port_t *port = node->data;
-			jack_port_set_latency_range (port, mode, &range);
-		}
-	} else {
-		for (node = playback_ports; node; node = jack_slist_next (node)) {
-			jack_port_t *port = node->data;
-			jack_port_set_latency_range (port, mode, &range);
-		}
+    if (mode == JackCaptureLatency) {
+	for (node = capture_ports; node; node = jack_slist_next (node)) {
+	    jack_port_t *port = (jack_port_t*)node->data;
+	    jack_port_set_latency_range (port, mode, &range);
 	}
+    } else {
+	for (node = playback_ports; node; node = jack_slist_next (node)) {
+	    jack_port_t *port = (jack_port_t*)node->data;
+	    jack_port_set_latency_range (port, mode, &range);
+	}
+    }
 }
 
 
@@ -694,7 +694,7 @@ int main (int argc, char *argv[]) {
 	fprintf (stderr, "invalid samplerate quality\n");
 	return 1;
     }
-    if ((client = jack_client_open (jack_name, 0, NULL)) == 0) {
+    if( (client = jack_client_open( jack_name, (JackOptions)0, NULL) ) == 0 ) {
 	fprintf (stderr, "jack server not running?\n");
 	return 1;
     }
@@ -738,12 +738,12 @@ int main (int argc, char *argv[]) {
     resample_upper_limit = static_resample_factor * 4.0;
     resample_mean = static_resample_factor;
 
-    offset_array = malloc( sizeof(double) * smooth_size );
+    offset_array = (double*)malloc( sizeof(double) * smooth_size );
     if( offset_array == NULL ) {
 	    fprintf( stderr, "no memory for offset_array !!!\n" );
 	    exit(20);
     }
-    window_array = malloc( sizeof(double) * smooth_size );
+    window_array = (double*)malloc( sizeof(double) * smooth_size );
     if( window_array == NULL ) {
 	    fprintf( stderr, "no memory for window_array !!!\n" );
 	    exit(20);
@@ -773,9 +773,9 @@ int main (int argc, char *argv[]) {
     // alloc input ports, which are blasted out to alsa...
     alloc_ports( num_channels, 0 );
 
-    outbuf = malloc( num_periods * period_size * formats[format].sample_size * num_channels );
-    resampbuf = malloc( num_periods * period_size * sizeof( float ) );
-    tmpbuf = malloc( 512 * formats[format].sample_size * num_channels );
+    outbuf = (char*)malloc( num_periods * period_size * formats[format].sample_size * num_channels );
+    resampbuf = (float*)malloc( num_periods * period_size * sizeof( float ) );
+    tmpbuf = (char*)malloc( 512 * formats[format].sample_size * num_channels );
 
     if ((outbuf == NULL) || (resampbuf == NULL) || (tmpbuf == NULL))
     {

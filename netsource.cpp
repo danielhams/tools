@@ -51,7 +51,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <jack/jack.h>
 
 //#include <net_driver.h>
-#include <netjack_packet.h>
+#include <netjack_packet.hpp>
 #if HAVE_SAMPLERATE
 #include <samplerate.h>
 #endif
@@ -280,7 +280,7 @@ process (jack_nframes_t nframes, void *arg)
 
 
     /* Allocate a buffer where both In and Out Buffer will fit */
-    packet_buf_tx = alloca (tx_bufsize);
+    packet_buf_tx = (uint32_t*)alloca(tx_bufsize);
 
     jacknet_packet_header *pkthdr_tx = (jacknet_packet_header *) packet_buf_tx;
 
@@ -419,7 +419,7 @@ process (jack_nframes_t nframes, void *arg)
         while (node != NULL)
         {
             port = (jack_port_t *) node->data;
-            buf = jack_port_get_buffer (port, nframes);
+            buf = (float*)jack_port_get_buffer (port, nframes);
             porttype = jack_port_type (port);
             if (strncmp (porttype, JACK_DEFAULT_AUDIO_TYPE, jack_port_type_size ()) == 0)
                 for (i = 0; i < nframes; i++)
@@ -646,7 +646,7 @@ main (int argc, char *argv[])
             case 's':
                 server_name = (char *) malloc (sizeof (char) * strlen (optarg)+1);
                 strcpy (server_name, optarg);
-                options |= JackServerName;
+                options = (JackOptions)(options | JackServerName);
                 break;
             case ':':
                 fprintf (stderr, "Option -%c requires an operand\n", optopt);

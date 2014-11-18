@@ -143,20 +143,23 @@ jack_unload_LDADD = $(top_builddir)/libjackpp/libjackpp.la
 #
 # Netjack slave tools
 #
-jack_netsource_SOURCES = netsource.c $(top_builddir)/drivers/netjack/netjack_packet.c
-jack_netsource_CFLAGS = @NETJACK_CFLAGS@ -I$(top_srcdir)/drivers/netjack
+jack_netsource_SOURCES = netsource.cpp $(top_builddir)/driverspp/netjack/netjack_packet.cpp
+jack_netsource_CFLAGS = @NETJACK_CFLAGS@ -I$(top_srcdir)/driverspp/netjack
+jack_netsource_CPPFLAGS = @NETJACK_CFLAGS@ -I$(top_srcdir)/driverspp/netjack
 jack_netsource_LDFLAGS = @NETJACK_LIBS@ @OS_LDFLAGS@ 
 jack_netsource_LDADD = $(top_builddir)/libjackpp/libjackpp.la
 
 if HAVE_SAMPLERATE
 if HAVE_ALSA
-alsa_in_SOURCES = alsa_in.c $(top_builddir)/drivers/alsa/memops.c
-alsa_in_CFLAGS = @NETJACK_CFLAGS@ -I$(top_builddir)/drivers/alsa
+alsa_in_SOURCES = alsa_in.cpp $(top_builddir)/driverspp/alsa/memops.cpp
+alsa_in_CFLAGS = @NETJACK_CFLAGS@ -I$(top_builddir)/driverspp/alsa
+alsa_in_CPPFLAGS = @NETJACK_CFLAGS@ -I$(top_builddir)/driverspp/alsa
 alsa_in_LDFLAGS = -lasound -lsamplerate @OS_LDFLAGS@
 alsa_in_LDADD = $(top_builddir)/libjackpp/libjackpp.la
 
-alsa_out_SOURCES = alsa_out.c $(top_builddir)/drivers/alsa/memops.c
-alsa_out_CFLAGS = @NETJACK_CFLAGS@ -I$(top_builddir)/drivers/alsa
+alsa_out_SOURCES = alsa_out.cpp $(top_builddir)/driverspp/alsa/memops.cpp
+alsa_out_CFLAGS = @NETJACK_CFLAGS@ -I$(top_builddir)/driverspp/alsa
+alsa_out_CPPFLAGS = @NETJACK_CFLAGS@ -I$(top_builddir)/driverspp/alsa
 alsa_out_LDFLAGS = -lasound -lsamplerate @OS_LDFLAGS@
 alsa_out_LDADD = $(top_builddir)/libjackpp/libjackpp.la
 endif #HAVE_ALSA
